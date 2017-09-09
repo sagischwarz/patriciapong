@@ -1,0 +1,36 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/include/c++/7.2.0",
+                "/usr/include/c++/7.2.0/x86_64-pc-linux-gnu",
+                "/usr/local/include",
+                "/usr/include",
+                "${workspaceRoot}",
+                "~/Code/Arduino/sketchbook/libraries/Gamebuino",
+                "~/.arduino15/packages/arduino/hardware/avr/1.6.20/cores/arduino",
+                "~/.arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/avr/include",
+                "~/.arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/lib/gcc/avr/4.9.2/include",
+                "~/.arduino15/packages/arduino/hardware/avr/1.6.20/libraries/SPI/src",
+                "~/.arduino15/packages/arduino/hardware/avr/1.6.20/variants/standard"
+            ],
+            "defines": [],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "/usr/include/c++/7.2.0",
+                    "/usr/include/c++/7.2.0/x86_64-pc-linux-gnu",
+                    "/usr/local/include",
+                    "/usr/include",
+                    "${workspaceRoot}",
+                    "~/Code/Arduino/sketchbook/libraries/Gamebuino",
+                    "~/.arduino15"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 2
+}
