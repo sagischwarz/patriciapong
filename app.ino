@@ -133,6 +133,26 @@ void rightPlayerScore() {
     }
 }
 
+void leftPaddleCollision() {
+    if (gameState.ball.posY + gameState.ball.size >= gameState.leftPaddle.posY &&
+        gameState.ball.posY <= (gameState.leftPaddle.posY + gameState.leftPaddle.heigt) &&
+        gameState.ball.posX <= gameState.leftPaddle.posX + gameState.leftPaddle.width &&
+        gameState.ball.vX < 0) {
+            gameState.ball.vX *= -1;
+            gb.sound.playTick();
+    }
+}
+
+void rightPaddleCollision() {
+    if (gameState.ball.posY + gameState.ball.size >= gameState.rightPaddle.posY &&
+        gameState.ball.posY <= (gameState.rightPaddle.posY + gameState.rightPaddle.heigt) &&
+        gameState.ball.posX + gameState.ball.size >= gameState.rightPaddle.posX &&
+        gameState.ball.vX > 0) {
+            gameState.ball.vX *= -1;
+            gb.sound.playTick();
+    }
+}
+
 void moveBall() {
     if (gameState.ball.posY < 0) {
         gameState.ball.vY *= -1;
@@ -142,20 +162,8 @@ void moveBall() {
         gameState.ball.vY *= -1;
     }
 
-
-    if (gameState.ball.posY + gameState.ball.size >= gameState.leftPaddle.posY &&
-        gameState.ball.posY <= (gameState.leftPaddle.posY + gameState.leftPaddle.heigt) &&
-        gameState.ball.posX <= gameState.leftPaddle.posX + gameState.leftPaddle.width) {
-            gameState.ball.vX *= -1;
-            gb.sound.playTick();
-    }
-
-    if (gameState.ball.posY + gameState.ball.size >= gameState.rightPaddle.posY &&
-        gameState.ball.posY <= (gameState.rightPaddle.posY + gameState.rightPaddle.heigt) &&
-        gameState.ball.posX + gameState.ball.size >= gameState.rightPaddle.posX) {
-            gameState.ball.vX *= -1;
-            gb.sound.playTick();
-    }
+    leftPaddleCollision();
+    rightPaddleCollision();
 
     gameState.ball.posX += gameState.ball.vX;
     gameState.ball.posY += gameState.ball.vY;
