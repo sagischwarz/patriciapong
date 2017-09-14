@@ -9,6 +9,7 @@ int centerX = LCDWIDTH / 2;
 int centerY = LCDHEIGHT / 2;
 
 struct Paddle {
+    int collisions;
     int width;
     int heigt;
     int posX;
@@ -18,6 +19,7 @@ struct Paddle {
 
 struct Paddle initPaddle(int posX, int posY) {
     Paddle paddle;
+    paddle.collisions = 0;
     paddle.heigt = paddleHeight;
     paddle.width = paddleWidth;
     paddle.v = 2;
@@ -38,8 +40,8 @@ struct Ball initBall() {
     Ball ball;
     ball.posX = LCDWIDTH / 2;
     ball.posY = LCDHEIGHT / 2;
-    ball.vX = 2;
-    ball.vY = 2;
+    ball.vX = 1;
+    ball.vY = 1;
     ball.size = 6;
     return ball;
 }
@@ -110,14 +112,14 @@ void resetBall() {
         gameState.ball.posY = centerY;
 }
 
-int sign(int x) {
+/*int sign(int x) {
     return (x > 0) - (x < 0);
 }
 
-int accelerateBall() {
+void accelerateBall() {
     gameState.ball.vX += sign(gameState.ball.vX);
     gameState.ball.vY += sign(gameState.ball.vY);
-}
+}*/
 
 void leftPlayerScore() {
     if (gameState.ball.posX < 0) {
@@ -133,6 +135,13 @@ void rightPlayerScore() {
     }
 }
 
+void handlePaddleHeight(struct Paddle *p) {
+    p->collisions++;
+    if (p->heigt > 6 && p->collisions % 3 == 0) {
+        p->heigt--;
+    }
+}
+
 void leftPaddleCollision() {
     if (gameState.ball.posY + gameState.ball.size >= gameState.leftPaddle.posY &&
         gameState.ball.posY <= (gameState.leftPaddle.posY + gameState.leftPaddle.heigt) &&
@@ -140,6 +149,7 @@ void leftPaddleCollision() {
         gameState.ball.vX < 0) {
             gameState.ball.vX *= -1;
             gb.sound.playTick();
+            handlePaddleHeight(&gameState.leftPaddle);
     }
 }
 
@@ -150,6 +160,21 @@ void rightPaddleCollision() {
         gameState.ball.vX > 0) {
             gameState.ball.vX *= -1;
             gb.sound.playTick();
+            handlePaddleHeight(&gameState.rightPaddle);
+    }
+}
+
+int currentMaxScore() {
+    return max(gameState.leftScore, gameState.rightScore);
+}
+
+int ballSpeedFactor() {
+    if (currentMaxScore() < 5) {
+        return 2;
+    } else if (currentMaxScore() < 10) {
+        return 3;
+    } else {
+        return 4;
     }
 }
 
@@ -165,8 +190,8 @@ void moveBall() {
     leftPaddleCollision();
     rightPaddleCollision();
 
-    gameState.ball.posX += gameState.ball.vX;
-    gameState.ball.posY += gameState.ball.vY;
+    gameState.ball.posX += gameState.ball.vX * ballSpeedFactor();
+    gameState.ball.posY += gameState.ball.vY * ballSpeedFactor();
 }
 
 void drawBall() {
@@ -184,6 +209,28 @@ void setupGame() {
     gb.titleScreen(F("Patricia Pong <3"));
 }
 
+void handleInput() {
+    if (gb.buttons.pressed(BTN_C)) {
+        setupGame();
+    }
+
+    if (gb.buttons.repeat(BTN_DOWN,2)) {
+        leftPaddleDown();
+    }
+
+    if (gb.buttons.repeat(BTN_UP,2)) {
+        leftPaddleUp();
+    }
+
+    if (gb.buttons.repeat(BTN_A, 2)) {
+        rightPaddleDown();
+    }
+
+    if (gb.buttons.repeat(BTN_B, 2)) {
+        rightPaddleUp();
+    }
+}
+
 void setup() {
     setupGame();
 }
@@ -192,31 +239,13 @@ void loop() {
     if (gb.update()){
         printScore();
 
-        if (gb.buttons.pressed(BTN_C)) {
-            setupGame();
-        }
+        handleInput(); 
 
-        if (gb.buttons.repeat(BTN_DOWN,2)) {
-            leftPaddleDown();
-        }
-
-        if (gb.buttons.repeat(BTN_UP,2)) {
-            leftPaddleUp();
-        }
-
-        if (gb.buttons.repeat(BTN_A, 2)) {
-            rightPaddleDown();
-        }
-
-        if (gb.buttons.repeat(BTN_B, 2)) {
-            rightPaddleUp();
-        }
-    
         moveBall();
 
         leftPlayerScore();
         rightPlayerScore();
- 
+
         drawBall();
         drawPaddles();
     }
